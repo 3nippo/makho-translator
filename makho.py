@@ -59,6 +59,18 @@ class Translator:
     def __active_element__(self):
         return self.driver.switch_to.__active_element__
 
+    def __raise_error__(self):
+        message = 'You have not chosen'
+
+        message += '' if self.from_locale else ' from_locale'
+
+        if not self.from_locale and not self.to_locale:
+            message += ' and'
+
+        message += '' if self.to_locale else ' to_locale'
+
+        raise RuntimeError(message)
+
     def translate(self, text, from_locale=None, to_locale=None):
         """
         Translates 'text' from 'from_locale' language to 'to_locale' language.
@@ -75,16 +87,7 @@ class Translator:
             self.__choose_to_locale__(to_locale)
 
         if not self.from_locale or not self.to_locale:
-            message = 'You have not chosen'
-
-            message += '' if self.from_locale else ' from_locale'
-
-            if not self.from_locale and not self.to_locale:
-                message += ' and'
-
-            message += '' if self.to_locale else ' to_locale'
-
-            raise RuntimeError(message)
+            self.__raise_error__()
 
         input_field = self.driver.find_element_by_id('source')
         input_field.send_keys(text)
